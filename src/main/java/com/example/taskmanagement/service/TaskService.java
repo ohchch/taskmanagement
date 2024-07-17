@@ -11,6 +11,10 @@ public interface TaskService {
     List<TaskDTO> findTasksByTitle(String title);
     List<TaskDTO> findTasksByCategory(String category);
     List<TaskDTO> findTasksByPriority(String priority);
+    List<TaskDTO> findTasksByUserId(Long userId);
+    List<TaskDTO> findTasksByTitleAndUserId(String title, Long userId);
+    List<TaskDTO> findTasksByCategoryAndUserId(String category, Long userId);
+    List<TaskDTO> findTasksByPriorityAndUserId(String priority, Long userId);
     Optional<TaskDTO> findById(Long id);
     TaskDTO updateTask(TaskDTO taskDTO);
     void deleteTask(Long id);

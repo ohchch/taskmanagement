@@ -35,17 +35,18 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<TaskDTO> getTasks(@RequestParam(required = false) String title,
+    public List<TaskDTO> getTasks(@RequestParam Long userId,
+                                  @RequestParam(required = false) String title,
                                   @RequestParam(required = false) String category,
                                   @RequestParam(required = false) String priority) {
         if (title != null) {
-            return taskService.findTasksByTitle(title);
+            return taskService.findTasksByTitleAndUserId(title, userId);
         } else if (category != null) {
-            return taskService.findTasksByCategory(category);
+            return taskService.findTasksByCategoryAndUserId(category, userId);
         } else if (priority != null) {
-            return taskService.findTasksByPriority(priority);
+            return taskService.findTasksByPriorityAndUserId(priority, userId);
         } else {
-            return taskService.findTasksByTitle("");
+            return taskService.findTasksByUserId(userId);
         }
     }
 

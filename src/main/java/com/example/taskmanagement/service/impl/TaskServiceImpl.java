@@ -65,6 +65,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public List<TaskDTO> findTasksByQueryAndUserId(String query, Long userId) {
+        List<Task> tasks = taskRepository.findByQueryAndUserId(query, userId);
+        return toDTOs(tasks);
+    }
+
+    @Override
     public Optional<TaskDTO> findById(Long id) {
         Optional<Task> task = taskRepository.findById(id);
         return task.map(this::toDTO);

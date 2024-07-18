@@ -36,15 +36,10 @@ public class TaskController {
 
     @GetMapping
     public List<TaskDTO> getTasks(@RequestParam Long userId,
-                                  @RequestParam(required = false) String title,
-                                  @RequestParam(required = false) String category,
-                                  @RequestParam(required = false) String priority) {
-        if (title != null) {
-            return taskService.findTasksByTitleAndUserId(title, userId);
-        } else if (category != null) {
-            return taskService.findTasksByCategoryAndUserId(category, userId);
-        } else if (priority != null) {
-            return taskService.findTasksByPriorityAndUserId(priority, userId);
+                                  @RequestParam(required = false) String query) {
+        System.out.println("Received request with userId: " + userId + " and query: " + query);
+        if (query != null) {
+            return taskService.findTasksByQueryAndUserId(query, userId);
         } else {
             return taskService.findTasksByUserId(userId);
         }

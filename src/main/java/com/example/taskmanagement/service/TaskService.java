@@ -1,13 +1,12 @@
 package com.example.taskmanagement.service;
 
 import com.example.taskmanagement.dto.TaskDTO;
-import com.example.taskmanagement.model.Task;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface TaskService {
-    TaskDTO createTask(Task task);
+    TaskDTO createTask(TaskDTO taskDTO, Long userId);
     List<TaskDTO> findTasksByTitle(String title);
     List<TaskDTO> findTasksByCategory(String category);
     List<TaskDTO> findTasksByPriority(String priority);

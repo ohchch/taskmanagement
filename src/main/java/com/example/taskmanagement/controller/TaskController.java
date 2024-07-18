@@ -1,14 +1,12 @@
 package com.example.taskmanagement.controller;
 
 import com.example.taskmanagement.dto.TaskDTO;
-import com.example.taskmanagement.model.Task;
-import com.example.taskmanagement.model.User;
 import com.example.taskmanagement.service.TaskService;
-import com.example.taskmanagement.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,20 +16,10 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
-    @Autowired
-    private UserService userService;
 
     @PostMapping
     public TaskDTO createTask(@RequestBody TaskDTO taskDTO, @RequestParam Long userId) {
-        User user = userService.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
-        Task task = new Task();
-        task.setTitle(taskDTO.getTitle());
-        task.setDescription(taskDTO.getDescription());
-        task.setCategory(taskDTO.getCategory());
-        task.setPriority(taskDTO.getPriority());
-        task.setUser(user);
-        return taskService.createTask(task);
+        return taskService.createTask(taskDTO, userId);
     }
 
     @GetMapping
@@ -60,6 +48,7 @@ public class TaskController {
             taskDTO.setDescription(taskDetails.getDescription());
             taskDTO.setCategory(taskDetails.getCategory());
             taskDTO.setPriority(taskDetails.getPriority());
+            taskDTO.setUpdatedAt(LocalDateTime.now());
             TaskDTO updatedTask = taskService.updateTask(taskDTO);
             return ResponseEntity.ok(updatedTask);
         } else {

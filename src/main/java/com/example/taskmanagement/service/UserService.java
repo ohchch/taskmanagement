@@ -10,4 +10,6 @@ public interface UserService {
     Optional<User> findById(Long id);
     boolean checkPassword(String rawPassword, String encodedPassword);
     User updateUser(User user);
+    boolean usernameExists(String username);
+    boolean emailExists(String email);
 }

@@ -43,4 +43,14 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
+
+    @Override
+    public boolean usernameExists(String username) {
+        return userRepository.findByUsername(username) != null;
+    }
+
+    @Override
+    public boolean emailExists(String email) {
+        return userRepository.findByEmail(email) != null;
+    }
 }

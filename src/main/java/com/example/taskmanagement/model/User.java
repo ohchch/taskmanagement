@@ -1,6 +1,8 @@
 package com.example.taskmanagement.model;
 
 import jakarta.persistence.*;
+
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -14,7 +16,7 @@ public class User {
     private String email;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Task> tasks;
+    private Set<Task> tasks = new HashSet<>();
 
     // Getters and Setters
 

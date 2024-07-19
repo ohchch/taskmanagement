@@ -19,60 +19,106 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@RequestBody User user) {
-        User registeredUser = userService.registerUser(user);
-        UserDTO userDTO = toDTO(registeredUser); // Convert User to UserDTO
-        if (userDTO != null) {
-            return ResponseEntity.ok(userDTO);
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Map<String, Object>> registerUser(@RequestBody User user) {
+        Map<String, Object> response = new HashMap<>();
+        
+        if (userService.usernameExists(user.getUsername())) {
+            response.put("message", "Username already exists.");
+            return ResponseEntity.badRequest().body(response);
+        }
+        
+        if (userService.emailExists(user.getEmail())) {
+            response.put("message", "Email already exists.");
+            return ResponseEntity.badRequest().body(response);
+        }
+        
+        if (user.getTasks() == null) {
+            user.setTasks(new HashSet<>());
+        }
+        
+        try {
+            User registeredUser = userService.registerUser(user);
+            UserDTO userDTO = toDTO(registeredUser);
+            response.put("message", "Registration successful!");
+            response.put("user", userDTO);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.put("message", "Registration failed: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
         }
     }
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User user) {
-        Optional<UserDTO> existingUser = Optional.ofNullable(userService.findByUsername(user.getUsername()))
-                .map(this::toDTO); // Convert User to UserDTO
-        if (existingUser.isPresent() && userService.checkPassword(user.getPassword(), userService.findByUsername(user.getUsername()).getPassword())) {
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Login successful!");
-            response.put("userId", existingUser.get().getId());
-            return ResponseEntity.ok(response);
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> existingUserOptional = Optional.ofNullable(userService.findByUsername(user.getUsername()));
+        
+        if (existingUserOptional.isPresent()) {
+            User existingUser = existingUserOptional.get();
+            if (userService.checkPassword(user.getPassword(), existingUser.getPassword())) {
+                UserDTO userDTO = toDTO(existingUser);
+                response.put("message", "Login successful!");
+                response.put("userId", userDTO.getId());
+                response.put("user", userDTO);
+                return ResponseEntity.ok(response);
+            } else {
+                response.put("message", "Invalid username or password");
+                return ResponseEntity.status(401).body(response);
+            }
         } else {
-            return ResponseEntity.status(401).body(Collections.singletonMap("message", "Invalid username or password"));
+            response.put("message", "Invalid username or password");
+            return ResponseEntity.status(401).body(response);
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody User user) {
+    public ResponseEntity<Map<String, Object>> updateUser(@PathVariable Long id, @RequestBody User user) {
+        Map<String, Object> response = new HashMap<>();
         Optional<User> existingUser = userService.findById(id);
+        
         if (existingUser.isPresent()) {
             User updatedUser = existingUser.get();
             updatedUser.setUsername(user.getUsername());
             updatedUser.setPassword(user.getPassword());
             updatedUser.setEmail(user.getEmail());
-            User savedUser = userService.updateUser(updatedUser);
-            UserDTO updatedUserDTO = toDTO(savedUser);
-            return ResponseEntity.ok(updatedUserDTO);
+            try {
+                User savedUser = userService.updateUser(updatedUser);
+                UserDTO updatedUserDTO = toDTO(savedUser);
+                response.put("message", "Update successful!");
+                response.put("user", updatedUserDTO);
+                return ResponseEntity.ok(response);
+            } catch (Exception e) {
+                response.put("message", "Update failed: " + e.getMessage());
+                return ResponseEntity.status(500).body(response);
+            }
         } else {
+            response.put("message", "User not found");
             return ResponseEntity.notFound().build();
         }
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable Long id) {
-        Optional<UserDTO> user = userService.findById(id)
-                .map(this::toDTO); // Convert User to UserDTO
-        return user.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Map<String, Object>> getUserById(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> userOptional = userService.findById(id);
+        
+        if (userOptional.isPresent()) {
+            UserDTO userDTO = toDTO(userOptional.get());
+            response.put("user", userDTO);
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("message", "User not found");
+            return ResponseEntity.notFound().build();
+        }
     }
 
-    // Helper method to convert User to UserDTO
-    private UserDTO toDTO(User user) {
-        UserDTO userDTO = new UserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setUsername(user.getUsername());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setTasks(user.getTasks().stream().map(TaskDTO::new).collect(Collectors.toSet()));
-        return userDTO;
-    }
+    public UserDTO toDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setTasks(user.getTasks() != null ? user.getTasks().stream().map(TaskDTO::new).collect(Collectors.toSet()) : Collections.emptySet());
+        return dto;
+    }    
+    
 }

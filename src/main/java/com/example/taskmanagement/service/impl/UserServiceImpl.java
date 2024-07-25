@@ -53,4 +53,26 @@ public class UserServiceImpl implements UserService {
     public boolean emailExists(String email) {
         return userRepository.findByEmail(email) != null;
     }
+
+    @Override
+    public User findOrCreateUser(String githubUserId, String email) throws Exception {
+        Optional<User> existingUserOptional = userRepository.findByGithubUserId(githubUserId);
+
+        if (existingUserOptional.isPresent()) {
+            return existingUserOptional.get();
+        } else {
+            User newUser = fetchUserFromGithub(githubUserId, email);
+            return userRepository.save(newUser);
+        }
+    }
+
+    private User fetchUserFromGithub(String githubUserId, String email) throws Exception {
+        User user = new User();
+        user.setGithubUserId(githubUserId);
+        user.setUsername(email); // 使用 email 作为用户名
+        user.setEmail(email);
+
+        user.setPassword(passwordEncoder.encode("default_password")); // 默认密码
+        return user;
+    }
 }

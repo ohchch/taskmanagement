@@ -12,4 +12,5 @@ public interface UserService {
     User updateUser(User user);
     boolean usernameExists(String username);
     boolean emailExists(String email);
+    User findOrCreateUser(String githubUserId, String email) throws Exception;
 }

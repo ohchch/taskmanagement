@@ -1,7 +1,6 @@
 package com.example.taskmanagement.model;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,6 +10,8 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
+    private String githubUserId; // 添加这个字段
     private String username;
     private String password;
     private String email;
@@ -26,6 +27,14 @@ public class User {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getGithubUserId() {
+        return githubUserId;
+    }
+
+    public void setGithubUserId(String githubUserId) {
+        this.githubUserId = githubUserId;
     }
 
     public String getUsername() {

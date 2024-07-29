@@ -31,7 +31,9 @@ public class SecurityConfig {
                             "/api/tasks/{id}",
                             "/api/tasks/{id}/priority",
                             "/api/tasks",
-                            "/api/users/oauth/login"
+                            "/api/users/oauth/login",
+                            "/api/users/getSession"
+                            
                 ).permitAll()
                 .anyRequest().authenticated()
             )

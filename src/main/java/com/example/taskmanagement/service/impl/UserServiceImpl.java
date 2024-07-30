@@ -19,6 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User registerUser(User user) {
+        // Encode the password before saving the user
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -40,6 +41,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateUser(User user) {
+        // Encode the password before updating the user
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
@@ -61,18 +63,21 @@ public class UserServiceImpl implements UserService {
         if (existingUserOptional.isPresent()) {
             return existingUserOptional.get();
         } else {
+            // Create a new user if not found
             User newUser = fetchUserFromGithub(githubUserId, email);
             return userRepository.save(newUser);
         }
     }
 
+    // Fetch user from GitHub based on GitHub user ID and email
     private User fetchUserFromGithub(String githubUserId, String email) throws Exception {
         User user = new User();
         user.setGithubUserId(githubUserId);
-        user.setUsername(email); // 使用 email 作为用户名
+        user.setUsername(email); // Use email as username
         user.setEmail(email);
 
-        user.setPassword(passwordEncoder.encode("default_password")); // 默认密码
+        // Set a default password (encoded)
+        user.setPassword(passwordEncoder.encode("default_password"));
         return user;
     }
 }

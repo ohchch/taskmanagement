@@ -11,7 +11,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    private String githubUserId; // 添加这个字段
+    private String githubUserId; // GitHub user ID field
     private String username;
     private String password;
     private String email;

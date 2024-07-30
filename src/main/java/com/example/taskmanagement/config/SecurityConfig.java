@@ -12,8 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -33,7 +31,6 @@ public class SecurityConfig {
                             "/api/tasks",
                             "/api/users/oauth/login",
                             "/api/users/getSession"
-                            
                 ).permitAll()
                 .anyRequest().authenticated()
             )

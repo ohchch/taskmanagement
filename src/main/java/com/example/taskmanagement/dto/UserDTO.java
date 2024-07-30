@@ -4,7 +4,7 @@ import java.util.Set;
 
 public class UserDTO {
     private Long id;
-    private String githubUserId; // 添加这个字段
+    private String githubUserId; // GitHub user ID field
     private String username;
     private String email;
     private Set<TaskDTO> tasks;

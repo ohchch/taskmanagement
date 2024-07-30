@@ -22,16 +22,19 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> registerUser(@RequestBody User user) {
         Map<String, Object> response = new HashMap<>();
 
+        // Check if username already exists
         if (userService.usernameExists(user.getUsername())) {
             response.put("message", "Username already exists.");
             return ResponseEntity.badRequest().body(response);
         }
 
+        // Check if email already exists
         if (userService.emailExists(user.getEmail())) {
             response.put("message", "Email already exists.");
             return ResponseEntity.badRequest().body(response);
         }
 
+        // Initialize tasks if null
         if (user.getTasks() == null) {
             user.setTasks(new HashSet<>());
         }
@@ -131,6 +134,7 @@ public class UserController {
         }
     }
 
+    // Convert User to UserDTO
     private UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());

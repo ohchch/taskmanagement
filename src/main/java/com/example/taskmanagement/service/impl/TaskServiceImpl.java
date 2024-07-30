@@ -32,9 +32,9 @@ public class TaskServiceImpl implements TaskService {
         task.setDescription(taskDTO.getDescription());
         task.setCategory(taskDTO.getCategory());
         task.setPriority(taskDTO.getPriority());
-        LocalDateTime createdAt = LocalDateTime.now(); // 获取当前时间
-        task.setCreatedAt(createdAt); // 设置创建时间
-        task.setUpdatedAt(createdAt); // 设置更新时间
+        LocalDateTime createdAt = LocalDateTime.now();
+        task.setCreatedAt(createdAt);
+        task.setUpdatedAt(createdAt);
         
         User user = userRepository.findById(userId)
                                   .orElseThrow(() -> new IllegalArgumentException("User not found"));
